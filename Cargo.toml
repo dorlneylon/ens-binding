@@ -1,0 +1,12 @@
+[package]
+name = "ens-registrar"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = { version = "0.7.2", features = ["full"] }
+eyre = "0.6"
+tokio = { version = "1", features = ["full"] }
+rand = "*"
+dotenv = "0.14.1"
+sha3 = "*"
