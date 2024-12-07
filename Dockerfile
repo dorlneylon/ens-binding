@@ -1,29 +1,38 @@
-FROM rust:1.75-slim AS builder
+FROM ubuntu:22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    libssl-dev \
+    pkg-config \
+    cmake \
+    ca-certificates \
+    gcc \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /app
-COPY Cargo.toml Cargo.lock ./
 
-RUN mkdir src
-COPY src/main.rs ./src/
-RUN cargo build --release
+COPY . .
 
-RUN rm -f target/release/deps/ccip_read_server*
-COPY src ./src
+RUN cargo build --release --bin ens-ccip-rust
 
-RUN cargo build --release
-FROM debian:bullseye-slim
+FROM ubuntu:22.04
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+COPY --from=builder /app/target/release/ens-ccip-rust /app/ens-ccip-rust
+RUN chmod +x /app/ens-ccip-rust
+EXPOSE 3000 
 
-COPY --from=builder /app/target/release/ccip-read-server /usr/local/bin/ccip-read-server
-
-COPY .env .env
-
-EXPOSE 3000
-
-CMD ["ccip-read-server"]
+ENTRYPOINT ["/app/ens-ccip-rust"]

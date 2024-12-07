@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker run -it --rm \
+  -v ./ngrok.yml:/var/lib/ngrok/ngrok.yml \
+  ngrok/ngrok:latest start mini-app api
