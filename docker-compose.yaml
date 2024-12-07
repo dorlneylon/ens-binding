@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  ccip-read-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+    restart: unless-stopped
