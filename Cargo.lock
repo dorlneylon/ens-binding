@@ -777,6 +777,7 @@ dependencies = [
  "ethers-providers",
  "futures-util",
  "getrandom",
+ "hex",
  "reqwest",
  "serde",
  "serde_json",
